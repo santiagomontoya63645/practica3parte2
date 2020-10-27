@@ -12,6 +12,9 @@ void leer_archivo(char *contenido,string b); //se leera el archivo usando y se l
 void convertircadena(int *entero,char *contenido);// convierte todos lo caracteres que hay en contenido a su valor en ascii y los guarda en entero
 void siste_binario(char *binario,int *entero);
 void metodo2(char *binario,int semilla, string b);
+void modificardinero(string descision);
+void retirardinero(string usuario);
+void aumentardinero(string usuario);
 int main()
 {
     string clave;
@@ -54,7 +57,7 @@ int main()
                               break;
                           case 2:
 
-                              //modificardinero("admin");//se usa para recargar las cuentas
+                              modificardinero("admin");//se usa para recargar las cuentas
                               break;
                           }
 
@@ -285,4 +288,95 @@ void metodo2(char *binario,int semilla, string b){
     escribir<<codificado;
     escribir.close();
 
+}
+void modificardinero(string descision){//aca se decide si se va a recargar o retirar
+    // si el que ingresa esel administrador solamente es para aumentar su dinero
+    string prueba="../practica3parte2/BD/";
+
+    if (descision=="admin"){// caso en que se va a recargar dinero
+        cout<<"ingrese usuario que va a recargar"<<endl;cin>>descision;
+        string auxdescision=descision;
+
+        deco_metodo2(3,descision);
+        descision=prueba+descision;
+        ifstream leer;
+            leer.open(descision);
+            if(leer.is_open()){
+                leer.close();
+                descision=auxdescision;
+               aumentardinero(descision);
+            }
+            else{
+                cout<<"usuario no encontrado"<<endl;
+
+            }
+
+    }
+    else{//caso en el que el usuario desee retirar el dinero
+
+        retirardinero(descision);
+    }
+
+}
+void retirardinero(string usuario){
+    //recive el nombre del archivo del usuario que desee retirar el dinero
+    string lo_que_tiene,guardarpasword;
+    long int lo_que_desea_retirar;
+
+    deco_metodo2(3,usuario);
+    //decodificara os datos del usuario y los llevara al archivo usando
+    lo_que_tiene=recogerunalinea(2,"usando");// recogo la tercer linea del archivo usando que es donde estara el saldo del usuario que desee retirar dinero
+    cout<<endl<<endl<<"su saldo actual es :"<<lo_que_tiene<<endl;
+    long int x=stoi(lo_que_tiene,nullptr,10);//convierte el saldo que esta en string a int
+    cout<<"ingrese la cantidad que desea retirar"<<endl;cin>>lo_que_desea_retirar;
+    x=x-lo_que_desea_retirar-1000;
+    cout<<endl<<endl<<"retiro exitoso su nuevo saldo es:"<<x<<endl;
+    guardarpasword=recogerunalinea(0,"usando");// recoge la linea donde esta contraseña
+    ofstream escribir;
+    escribir.open("usando");// el resto de lafuncion lo que hace es guardar los cambios
+    // reescribo el archivo usando  con los cambios que se hicieron al usuario al retirar dinero
+
+    escribir<<guardarpasword;
+    escribir<<"\nsaldo:";
+    escribir<<"\n";
+    escribir<<x;
+    escribir.close();
+    char contenido[10000]={};
+    int entero[10000]={};
+    char binario[80000]={};
+    // encripto los cambios de usando y los guardo en el archivo del usuario que esta retirando dinero y borro el archivo usando
+    leer_archivo(contenido,"usando");
+    convertircadena(entero,contenido);
+    siste_binario(binario,entero);
+    metodo2(binario,3,usuario);
+    remove("usando");//como aca se realizaron cambios y despues se codifico eliminamos este achivo
+
+}
+void aumentardinero(string usuario){//solo el admin puede aumentar el dinero si el usuario quiere recargar que vaya alas oficinas de los admins
+    // recive d eentrada el nombre del archivo del usuario que senecesita decodificar, aumentar sus aldo y despues codificar
+    long int lo_que_desea_recargar;
+    string lo_que_tiene,guardarpasword;
+    cout<<"cuanto va a recargar?"<<endl;cin>>lo_que_desea_recargar;
+    deco_metodo2(3,usuario);
+    lo_que_tiene=recogerunalinea(2,"usando");// recoge la linea del saldo que posteriormente se convertia a enetero para poder modificar el saldo
+    long int x=stoi(lo_que_tiene,nullptr,10);
+    x+=lo_que_desea_recargar;
+    cout<<"recarga exiosa"<<endl<<" su nuevo saldo es :"<<x<<endl;
+    guardarpasword=recogerunalinea(0,"usando");
+    usuario="../practica3parte2/BD/"+usuario;
+    ofstream escribir;
+    escribir.open(usuario);// el resto de lafuncion lo que hace es guardar los cambios
+    escribir<<guardarpasword;
+    escribir<<"\nsaldo:";
+    escribir<<"\n";
+    escribir<<x;
+    escribir.close();
+    char contenido[10000]={};//guarda el contenido del archivo que desea modificar en este casoo el usuario
+    int entero[10000]={};// se guardara cada caracter de contenido pero en ascii (convertircadena)
+    char binario[80000]={};// todo lo que haya en entero se llevara a binario
+    leer_archivo(contenido,usuario);
+    convertircadena(entero,contenido);
+    siste_binario(binario,entero);
+    metodo2(binario,3,usuario);
+    remove("../practica3parte2/BD/usando");//como aca se realizaron cambios y despues se codifico eliminamos este achivo
 }
