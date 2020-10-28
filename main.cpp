@@ -15,6 +15,8 @@ void metodo2(char *binario,int semilla, string b);
 void modificardinero(string descision);
 void retirardinero(string usuario);
 void aumentardinero(string usuario);
+bool ingresarcomousuario(string a);
+void versaldo(string usuario);
 int main()
 {
     string clave;
@@ -35,15 +37,12 @@ int main()
                       a="sudo";
                       cout<<"ingrese clave de admin"<<endl;cin>>clave;
 
-                      deco_metodo2(2,a);// decodifica el archivo sudo
+                      deco_metodo2(4,a);// decodifica el archivo sudo
                       clavedecod=recogerunalinea(0,"usando");// abre el archivo usando y recoge la contraseña para compararla
                       remove("../practica3parte2/BD/usando");
                       claveverif=verificador(clave,clavedecod);
                       if(claveverif==false){//cave d eadministrador que ingreso esta incorrecta
                           cout<<"clave incorrecta"<<endl;
-                      }
-                      else{
-                          cout<<"clave wryyyyyyy"<<endl;
                       }
                   }
                   while (claveverif==true){
@@ -66,6 +65,33 @@ int main()
 
                       claveverif=false;//poner despues de esto si se desea sali del sistema
                   }
+
+              }
+              else{
+
+                  usuario=ingresarcomousuario(a);//poner los cassos de mirar saldo o retirar saldoo errar seccion
+                  opcion3=0;
+                  if (usuario==true){
+                      while(opcion3!=3){
+                          cout<<"ingrese 1 si desea ver su saldo"<<endl<<"ingrese 2 si desea retirar dinero"<<endl<<"ingrese 3 para cerrar seccion"<<endl;
+                          cin>>opcion3;
+                          cout<<endl<<endl<<endl<<endl<<endl;
+                          switch (opcion3) {//aca el usuario escoge que desea hacer
+                            case 1:
+                              //versaldo(a);
+                              break;
+                            case 2:
+                              modificardinero(a);
+                              break;
+
+                          }
+
+                      }
+                  }
+                  f=false;
+
+                  remove("usando");//como aca se realizaron cambios y despues se codifico eliminamos este achivo
+
               }
           }
         }
@@ -184,7 +210,7 @@ void crearusuario(){
             leer_archivo(contenido,b);//ya fue explicado al inicio del archivo
             convertircadena(entero,contenido);
             siste_binario(binario,entero);
-            metodo2(binario,3,b);
+            metodo2(binario,4,b);
         }
     }
 }
@@ -297,7 +323,7 @@ void modificardinero(string descision){//aca se decide si se va a recargar o ret
         cout<<"ingrese usuario que va a recargar"<<endl;cin>>descision;
         string auxdescision=descision;
 
-        deco_metodo2(3,descision);
+        deco_metodo2(4,descision);
         descision=prueba+descision;
         ifstream leer;
             leer.open(descision);
@@ -323,7 +349,7 @@ void retirardinero(string usuario){
     string lo_que_tiene,guardarpasword;
     long int lo_que_desea_retirar;
 
-    deco_metodo2(3,usuario);
+    deco_metodo2(4,usuario);
     //decodificara os datos del usuario y los llevara al archivo usando
     lo_que_tiene=recogerunalinea(2,"usando");// recogo la tercer linea del archivo usando que es donde estara el saldo del usuario que desee retirar dinero
     cout<<endl<<endl<<"su saldo actual es :"<<lo_que_tiene<<endl;
@@ -348,7 +374,7 @@ void retirardinero(string usuario){
     leer_archivo(contenido,"usando");
     convertircadena(entero,contenido);
     siste_binario(binario,entero);
-    metodo2(binario,3,usuario);
+    metodo2(binario,4,usuario);
     remove("usando");//como aca se realizaron cambios y despues se codifico eliminamos este achivo
 
 }
@@ -357,7 +383,7 @@ void aumentardinero(string usuario){//solo el admin puede aumentar el dinero si 
     long int lo_que_desea_recargar;
     string lo_que_tiene,guardarpasword;
     cout<<"cuanto va a recargar?"<<endl;cin>>lo_que_desea_recargar;
-    deco_metodo2(3,usuario);
+    deco_metodo2(4,usuario);
     lo_que_tiene=recogerunalinea(2,"usando");// recoge la linea del saldo que posteriormente se convertia a enetero para poder modificar el saldo
     long int x=stoi(lo_que_tiene,nullptr,10);
     x+=lo_que_desea_recargar;
@@ -377,6 +403,42 @@ void aumentardinero(string usuario){//solo el admin puede aumentar el dinero si 
     leer_archivo(contenido,usuario);
     convertircadena(entero,contenido);
     siste_binario(binario,entero);
-    metodo2(binario,3,usuario);
+    metodo2(binario,4,usuario);
     remove("../practica3parte2/BD/usando");//como aca se realizaron cambios y despues se codifico eliminamos este achivo
+}
+bool ingresarcomousuario(string a){// en esta funcion es donde se verificara el inreso del usuario y se sumara o restara dinero
+    // se recive el nombre del usuario que desee ingresar al cajero
+    string contrasena;
+    string contrasenaverdadera;
+    string auxa=a;
+    bool con=true;
+
+    while(con==true){
+        a=auxa;
+        deco_metodo2(4,a);// decodifico el archivo  del usuario que desee ingresar, si no existe saldra de la funcion y se le preguntara si desea ingresar al sistema
+        a="../practica3parte2/BD/"+a;
+        ifstream leer;
+            leer.open(a);
+            if(leer.is_open()){
+                leer.close();
+               contrasenaverdadera=recogerunalinea(0,"usando");//recogo la linea que tiene las contraseñas para compararlas
+               remove("usando");//como aca se realizaron cambios y despues se codifico eliminamos este achivo
+                cout<<"ingrese contrasena"<<endl;
+                cin>>contrasena;
+
+                if (contrasena==contrasenaverdadera){
+                    cout<<"sesion iniciada"<<endl;
+                    return true;
+                    con=false;
+                }
+                else{
+                    cout<<"contrasena incorrecta"<<endl;
+                }
+            }
+            else{
+                cout<<"usuaio no encontrado"<<endl;
+                return false;
+                con=false;
+            }
+    }
 }
