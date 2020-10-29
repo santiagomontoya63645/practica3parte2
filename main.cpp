@@ -2,12 +2,20 @@
 #include <iostream>
 #include <string>
 #include <math.h>
+// para ingresar como administrador debes darle en la opcion  ingresar al a sistema y cuando te pida el usuario ingresar administrador, luego te pide la clave que es 1234
 //la clave de administrador es 1234 y la cuenta de administrador es administrador
 //pd el archivo usando es un archivo temporal donde se realizaran cambios de las demas cuentas y posteriormente se guardaran en dichas cuentas
 //se esta encryptando y desencryptando con el metodo 2 con semilla 4
 // muchas de las funciones se explican solas con el nombre
 //este archivo debe eestar en una una carpeta llamada practica3parte2
-// el dinero dewbe ser representado hasta con un maximo de 8 bits
+// el dinero debe ser representado hasta con un maximo de 8 bits
+//todos los archivos cuando se crean cuando se modifica el dinero se realizan los cambios y luego se procede a encryptarlos
+//la unica manera de verificar los cambios es atravez del cmd cuando se aumenta o se disminuye el dinero
+//todos los aarchivos de los ususarios estan encryptados
+
+
+
+//recalco esto este archivo debe eestar en una una carpeta llamada practica3parte2
 using namespace std;
 string recogerunalinea(int linea, string a);
 bool verificador(string clave,string claveingresada);
@@ -46,7 +54,7 @@ int main()
                       clavedecod=recogerunalinea(0,"usando");// abre el archivo usando y recoge la contraseña para compararla
                       remove("../practica3parte2/BD/usando");
                       claveverif=verificador(clave,clavedecod);
-                      if(claveverif==false){//cave d eadministrador que ingreso esta incorrecta
+                      if(claveverif==false){//cave de administrador que ingreso esta incorrecta
                           cout<<"clave incorrecta"<<endl;
                       }
                   }
